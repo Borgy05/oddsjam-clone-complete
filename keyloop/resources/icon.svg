@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Placeholder app icon — replace with final art before store submission. -->
+  <rect width="1024" height="1024" rx="180" fill="#0a0a0d"/>
+  <g>
+    <rect x="172" y="312" width="680" height="400" rx="24" fill="#1c1c1e"/>
+    <rect x="196" y="336" width="92" height="352" rx="8" fill="#f4f4f6"/>
+    <rect x="296" y="336" width="92" height="352" rx="8" fill="#f4f4f6"/>
+    <rect x="396" y="336" width="92" height="352" rx="8" fill="#f4f4f6"/>
+    <rect x="496" y="336" width="92" height="352" rx="8" fill="#f4f4f6"/>
+    <rect x="596" y="336" width="92" height="352" rx="8" fill="#f4f4f6"/>
+    <rect x="696" y="336" width="92" height="352" rx="8" fill="#f4f4f6"/>
+    <rect x="252" y="336" width="60" height="210" rx="6" fill="#0a0a0d"/>
+    <rect x="352" y="336" width="60" height="210" rx="6" fill="#0a0a0d"/>
+    <rect x="552" y="336" width="60" height="210" rx="6" fill="#0a0a0d"/>
+    <rect x="652" y="336" width="60" height="210" rx="6" fill="#0a0a0d"/>
+  </g>
+  <circle cx="512" cy="824" r="56" fill="#ff3b30"/>
+  <path d="M 736 200 a 160 160 0 1 1 -110 44" stroke="#4da3ff" stroke-width="40" fill="none" stroke-linecap="round"/>
+  <path d="M 740 140 l -10 70 70 8 z" fill="#4da3ff"/>
+</svg>
