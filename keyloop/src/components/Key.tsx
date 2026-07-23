@@ -34,14 +34,18 @@ interface WhiteKeyProps extends KeyHandlers {
   octave: number;
   pressed: boolean;
   isFirst: boolean;
+  /** Teacher guidance: this is the key to play now. */
+  hint?: boolean;
 }
+
+const HINT_GLOW = "0 0 0 3px rgba(77,163,255,0.9), 0 0 16px 2px rgba(77,163,255,0.75)";
 
 const CHIP_COLORS: Record<number, { bg: string; text: string }> = {
   4: { bg: "#a9f0c1", text: "#1a4a2a" },
   5: { bg: "#9ee3ec", text: "#0d4650" },
 };
 
-export function WhiteKey({ note, octave, pressed, isFirst, onNoteOn, onNoteOff }: WhiteKeyProps) {
+export function WhiteKey({ note, octave, pressed, isFirst, hint, onNoteOn, onNoteOff }: WhiteKeyProps) {
   const reduced = useReducedMotion();
   const handlers = usePointerHandlers(note, { onNoteOn, onNoteOff });
   const chip = CHIP_COLORS[octave] ?? CHIP_COLORS[4];
@@ -52,11 +56,16 @@ export function WhiteKey({ note, octave, pressed, isFirst, onNoteOn, onNoteOff }
       transition={reduced ? { duration: 0 } : pressSpring}
       className="relative h-full flex-1 rounded-b-[7px]"
       style={{
-        background: pressed
+        background: hint
+          ? "linear-gradient(180deg, #eaf5ff 0%, #d5ebff 60%, #b9dcff 100%)"
+          : pressed
           ? "linear-gradient(180deg, #e9e9ee 0%, #dddde4 60%, #c9c9d2 100%)"
           : "linear-gradient(180deg, #ffffff 0%, #f4f4f6 60%, #dcdce2 100%)",
         borderLeft: isFirst ? "none" : "1px solid #c8c8d0",
-        boxShadow: "inset 0 -7px 9px -5px rgba(0,0,0,0.28)",
+        boxShadow: hint
+          ? `${HINT_GLOW}, inset 0 -7px 9px -5px rgba(0,0,0,0.28)`
+          : "inset 0 -7px 9px -5px rgba(0,0,0,0.28)",
+        zIndex: hint ? 5 : undefined,
       }}
     >
       <span
@@ -72,12 +81,13 @@ export function WhiteKey({ note, octave, pressed, isFirst, onNoteOn, onNoteOff }
 interface BlackKeyProps extends KeyHandlers {
   note: string;
   pressed: boolean;
+  hint?: boolean;
   /** Left edge and width as percentages of the keyboard width. */
   leftPct: number;
   widthPct: number;
 }
 
-export function BlackKey({ note, pressed, leftPct, widthPct, onNoteOn, onNoteOff }: BlackKeyProps) {
+export function BlackKey({ note, pressed, hint, leftPct, widthPct, onNoteOn, onNoteOff }: BlackKeyProps) {
   const reduced = useReducedMotion();
   const handlers = usePointerHandlers(note, { onNoteOn, onNoteOff });
   return (
@@ -90,11 +100,14 @@ export function BlackKey({ note, pressed, leftPct, widthPct, onNoteOn, onNoteOff
         left: `${leftPct}%`,
         width: `${widthPct}%`,
         height: "62%",
-        background: pressed
+        background: hint
+          ? "linear-gradient(180deg, #2f6ea8 0%, #1c4e7e 40%, #0d3358 100%)"
+          : pressed
           ? "linear-gradient(180deg, #2e2e34 0%, #101014 40%, #020203 100%)"
           : "linear-gradient(180deg, #4a4a52 0%, #1a1a1f 40%, #050507 100%)",
-        boxShadow:
-          "0 4px 7px rgba(0,0,0,0.65), inset 0 1px 1px rgba(255,255,255,0.22), inset 0 -2px 3px rgba(0,0,0,0.6)",
+        boxShadow: hint
+          ? `${HINT_GLOW}, 0 4px 7px rgba(0,0,0,0.65)`
+          : "0 4px 7px rgba(0,0,0,0.65), inset 0 1px 1px rgba(255,255,255,0.22), inset 0 -2px 3px rgba(0,0,0,0.6)",
       }}
     />
   );

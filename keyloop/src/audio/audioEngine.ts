@@ -353,3 +353,33 @@ export function getLoopBars(): number {
 export function isSamplerReady(): boolean {
   return samplerReady;
 }
+
+// --- Shared surface for the teacher engine ---
+// The teacher plays through the SAME sampler/synth and the SAME Transport so
+// its melody stays sample-accurate and can layer over the beat.
+
+export function isReady(): boolean {
+  return initialized;
+}
+
+/** Fire a note immediately (used by the teacher's Learn-mode demonstration). */
+export function playNoteNow(note: string, durationSec: number, velocity = 0.85) {
+  if (!initialized) return;
+  instrument().triggerAttackRelease(note, Math.max(0.05, durationSec), undefined, velocity);
+}
+
+/** Schedule a note at an absolute transport time (used by teacher Play mode). */
+export function playNoteAt(note: string, durationSec: number, time: number, velocity = 0.85) {
+  if (!initialized) return;
+  instrument().triggerAttackRelease(note, Math.max(0.05, durationSec), time, velocity);
+}
+
+/** A metronome click, for the teacher's count-in. */
+export function playClick(accent: boolean, time?: number) {
+  if (!initialized) return;
+  click.triggerAttackRelease(accent ? "G5" : "C5", "32n", time);
+}
+
+export function startTransport() {
+  if (initialized) ensureTransportRunning();
+}

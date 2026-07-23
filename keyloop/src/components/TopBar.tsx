@@ -1,15 +1,25 @@
-import { ChevronLeft, Menu, Piano as PianoIcon, Sparkles, Timer, Waves } from "lucide-react";
+import {
+  ChevronLeft,
+  GraduationCap,
+  Menu,
+  Piano as PianoIcon,
+  Sparkles,
+  Timer,
+  Waves,
+} from "lucide-react";
 import { TransportControls } from "./TransportControls";
 
 interface TopBarProps {
   metronomeOn: boolean;
   sustainOn: boolean;
+  teacherOn: boolean;
   isRecording: boolean;
   hasLoop: boolean;
   loopPlaying: boolean;
   loopBars: number;
   onToggleMetronome: () => void;
   onToggleSustain: () => void;
+  onToggleTeacher: () => void;
   onToggleRecord: () => void;
   onToggleLoopPlay: () => void;
   onClear: () => void;
@@ -69,6 +79,13 @@ export function TopBar(props: TopBarProps) {
       </div>
 
       <div className="flex items-center gap-1.5">
+        <IconButton
+          label="Teacher"
+          active={props.teacherOn}
+          onClick={props.onToggleTeacher}
+        >
+          <GraduationCap size={19} />
+        </IconButton>
         <IconButton
           label="Sustain"
           active={props.sustainOn}

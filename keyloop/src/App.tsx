@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as engine from "./audio/audioEngine";
+import * as teacher from "./audio/teacherEngine";
+import type { TeacherMode, TeacherState } from "./audio/teacherEngine";
 import { BeatControls } from "./components/BeatControls";
 import { Navigator } from "./components/Navigator";
 import { Piano } from "./components/Piano";
 import { RotatePrompt } from "./components/RotatePrompt";
+import { TeacherBar } from "./components/TeacherBar";
 import { TopBar } from "./components/TopBar";
 import { COMPUTER_KEY_MAP } from "./lib/notes";
 
@@ -25,6 +28,11 @@ export default function App() {
   const [patternIndex, setPatternIndex] = useState(0);
   const [beatVolume, setBeatVolume] = useState(0.5);
 
+  const [teacherOn, setTeacherOn] = useState(false);
+  const [teacherState, setTeacherState] = useState<TeacherState | null>(null);
+
+  useEffect(() => teacher.subscribe(setTeacherState), []);
+
   const [isPortrait, setIsPortrait] = useState(
     () => window.matchMedia("(orientation: portrait)").matches
   );
@@ -44,6 +52,8 @@ export default function App() {
     // resolved promise and adds no latency.
     await engine.initAudio();
     engine.noteOn(note);
+    // In Learn mode the teacher advances when you hit the glowing key.
+    teacher.handleUserNote(note);
   }, []);
 
   const noteOff = useCallback(async (note: string) => {
@@ -142,6 +152,31 @@ export default function App() {
     engine.setBeatVolume(v);
   };
 
+  const toggleTeacher = async () => {
+    await engine.initAudio();
+    if (teacherOn) {
+      teacher.exit();
+      setTeacherOn(false);
+    } else {
+      // Stop the free-play beat so the lesson owns the tempo cleanly.
+      engine.setBeatPlaying(false);
+      setBeatPlaying(false);
+      teacher.setRestoreBpm(bpm);
+      teacher.load(teacher.getSongId());
+      setTeacherOn(true);
+    }
+  };
+
+  const selectSong = (id: string) => {
+    teacher.setRestoreBpm(bpm);
+    teacher.load(id);
+  };
+
+  const teacherPlay = async () => {
+    await engine.initAudio();
+    teacher.togglePlay();
+  };
+
   return (
     <div
       className="flex h-full flex-col"
@@ -151,27 +186,48 @@ export default function App() {
       <TopBar
         metronomeOn={metronomeOn}
         sustainOn={sustainOn}
+        teacherOn={teacherOn}
         isRecording={isRecording}
         hasLoop={hasLoop}
         loopPlaying={loopPlaying}
         loopBars={loopBars}
         onToggleMetronome={() => void toggleMetronome()}
         onToggleSustain={toggleSustain}
+        onToggleTeacher={() => void toggleTeacher()}
         onToggleRecord={() => void toggleRecord()}
         onToggleLoopPlay={() => void toggleLoopPlay()}
         onClear={clearLoop}
       />
-      <Navigator />
-      <BeatControls
-        beatPlaying={beatPlaying}
-        bpm={bpm}
-        patternIndex={patternIndex}
-        volume={beatVolume}
-        onToggleBeat={() => void toggleBeat()}
-        onBpmChange={changeBpm}
-        onPatternChange={changePattern}
-        onVolumeChange={changeBeatVolume}
-      />
+      {teacherOn && teacherState ? (
+        <TeacherBar
+          state={teacherState}
+          onSelectSong={selectSong}
+          onSetMode={(m: TeacherMode) => teacher.setMode(m)}
+          onTempo={(s) => teacher.setTempoScale(s)}
+          onTogglePlay={() => void teacherPlay()}
+          onRestart={() => teacher.restart()}
+          onSkip={(d) => teacher.skip(d)}
+          onSeek={(f) => teacher.seekFraction(f)}
+          onMarkA={() => teacher.markLoopA()}
+          onMarkB={() => teacher.markLoopB()}
+          onClearLoop={() => teacher.clearLoop()}
+          onExit={() => void toggleTeacher()}
+        />
+      ) : (
+        <>
+          <Navigator />
+          <BeatControls
+            beatPlaying={beatPlaying}
+            bpm={bpm}
+            patternIndex={patternIndex}
+            volume={beatVolume}
+            onToggleBeat={() => void toggleBeat()}
+            onBpmChange={changeBpm}
+            onPatternChange={changePattern}
+            onVolumeChange={changeBeatVolume}
+          />
+        </>
+      )}
 
       {/* Keys anchor to the bottom and cap their height so they keep a real
           keyboard proportion instead of stretching into ribbons. */}
@@ -179,6 +235,7 @@ export default function App() {
         <div className="w-full" style={{ height: "min(100%, 420px)" }}>
           <Piano
             pressed={pressed}
+            hintNote={teacherOn ? teacherState?.targetNote : null}
             onNoteOn={(n) => void noteOn(n)}
             onNoteOff={(n) => void noteOff(n)}
           />

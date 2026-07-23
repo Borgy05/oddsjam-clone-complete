@@ -3,11 +3,12 @@ import { BlackKey, WhiteKey } from "./Key";
 
 interface PianoProps {
   pressed: Set<string>;
+  hintNote?: string | null;
   onNoteOn: (note: string) => void;
   onNoteOff: (note: string) => void;
 }
 
-export function Piano({ pressed, onNoteOn, onNoteOff }: PianoProps) {
+export function Piano({ pressed, hintNote, onNoteOn, onNoteOff }: PianoProps) {
   const { whites, blacks } = KEYS;
   const whiteWidthPct = 100 / whites.length;
   // SPEC-NOTE: the spec's "9% width" for black keys would make them nearly
@@ -25,6 +26,7 @@ export function Piano({ pressed, onNoteOn, onNoteOff }: PianoProps) {
             octave={k.octave}
             isFirst={i === 0}
             pressed={pressed.has(k.note)}
+            hint={hintNote === k.note}
             onNoteOn={onNoteOn}
             onNoteOff={onNoteOff}
           />
@@ -35,6 +37,7 @@ export function Piano({ pressed, onNoteOn, onNoteOff }: PianoProps) {
           key={k.note}
           note={k.note}
           pressed={pressed.has(k.note)}
+          hint={hintNote === k.note}
           leftPct={(k.afterWhiteIndex + 1) * whiteWidthPct - blackWidthPct / 2}
           widthPct={blackWidthPct}
           onNoteOn={onNoteOn}

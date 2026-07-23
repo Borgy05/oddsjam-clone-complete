@@ -35,6 +35,25 @@ A `PolySynth` fallback plays until the sample buffers finish loading.
   to extend). On desktop you can also play with the computer keyboard
   (`a w s e d f t g y h u j k o l p ;`).
 
+## Teacher mode (learn a song)
+
+Tap the graduation-cap icon (top right) to open the teacher. It teaches
+built-in **public-domain** melodies (Twinkle, Ode to Joy, Mary Had a Little
+Lamb, Frère Jacques) — no falling notes, so the keyboard keeps full height;
+the key you need to play lights up blue.
+
+- **Learn mode** — the song *waits* for you. Press the glowing key and it
+  advances to the next note. Impossible to fall behind; go at your own pace.
+- **Play along** — the melody plays at tempo (with a 1-bar count-in) and you
+  play along. The upcoming key lights slightly early so you can prepare.
+- **Speed** 25–150%, a **scrub bar** to jump anywhere, **rewind/FF**, and an
+  **A–B loop** to drill a tricky section.
+
+The teacher runs on the same Tone.js Transport as the beat, so a lesson stays
+in time. Song data lives in `src/audio/songs.ts` as `{note, beats}` events —
+the exact shape a future LLM "teach me any song" feature would emit, so the
+whole play-along engine is already proven. See `src/audio/teacherEngine.ts`.
+
 ## Development
 
 ```bash
