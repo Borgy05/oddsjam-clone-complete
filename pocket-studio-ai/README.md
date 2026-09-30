@@ -18,14 +18,14 @@ This shapes the AI's system prompt and all in-app wording. Working tagline: *"Su
 
 ## Status
 
-Planning. No code yet. Waiting for Paul's go-ahead to start Phase 0 (setup and timing test).
+Phase 0 (setup and timing test) is built and waiting for a phone test. See [PROGRESS.md](PROGRESS.md) for status, decisions and the exact steps to install it on your phone.
 
 ## Proposed decisions (awaiting Paul's confirmation)
 
 From the review of the technical brief:
 
-- Give the project its own repository before Phase 0.
-- Build the phone app with EAS cloud builds rather than local Android Studio builds.
+- Move the project to its own repository (for now it is built in this folder and moved later, as Paul chose).
+- Build the phone app with EAS cloud builds rather than local Android Studio builds (set up in Phase 0).
 - Use Supabase Edge Functions for the backend proxy.
 - Use live scheduling for all playback; use offline rendering only for WAV export.
 - Move Channel view scenes and the sampler to "MVP+" unless early testers ask for them.
